@@ -45,6 +45,10 @@ import {
   User as FirebaseUser
 } from "firebase/auth";
 
+// --- Custom Components ---
+import AILoader from "./components/AILoader";
+import SystemStatus from "./components/SystemStatus";
+
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
@@ -85,7 +89,7 @@ export default function App() {
   const [firebaseUser, setFirebaseUser] = useState<FirebaseUser | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
-  
+  const [isVerifying, setIsVerifying] = useState(false);
   const [authLoading, setAuthLoading] = useState(false);
   
   const [companies, setCompanies] = useState<any[]>([]);
@@ -158,7 +162,14 @@ export default function App() {
 
     setAuthLoading(true);
     try {
-      await signInWithPopup(auth, googleProvider);
+      const result = await signInWithPopup(auth, googleProvider);
+      if (result.user) {
+        setIsVerifying(true);
+        // Simulate AI Risk Verification
+        setTimeout(() => {
+          setIsVerifying(false);
+        }, 3500);
+      }
     } catch (err: any) {
       console.error("Google login failed", err);
       alert("Login failed: " + err.message);
@@ -267,6 +278,10 @@ export default function App() {
     );
   }
 
+  if (isVerifying) {
+    return <AILoader />;
+  }
+
   if (!firebaseUser) {
     return (
       <div className="min-h-screen glass flex items-center justify-center p-6 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]">
@@ -320,7 +335,7 @@ export default function App() {
             </div>
             <div>
               <h1 className="text-xl font-black tracking-tighter leading-none">INTELICREDIT</h1>
-              <span className="text-[10px] font-bold text-primary tracking-[0.2em] uppercase">Secured Intelligence</span>
+              <span className="text-[10px] font-bold text-primary tracking-[0.2em] uppercase">AI Powered Lending Intelligence</span>
             </div>
           </div>
 
@@ -330,9 +345,18 @@ export default function App() {
               Neural Pipeline Active
             </div>
             <div className="flex items-center gap-4">
-              <div className="text-right hidden sm:block">
-                <div className="text-xs font-black uppercase text-primary">{profile?.name || firebaseUser.displayName}</div>
-                <div className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">{profile?.email || firebaseUser.email}</div>
+              <div className="flex items-center gap-3 text-right hidden sm:flex">
+                <div className="text-right">
+                  <div className="text-xs font-black uppercase text-primary">{profile?.name || firebaseUser.displayName}</div>
+                  <div className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">{profile?.email || firebaseUser.email}</div>
+                </div>
+                {firebaseUser.photoURL && (
+                  <img 
+                    src={firebaseUser.photoURL} 
+                    alt="Profile" 
+                    className="w-10 h-10 rounded-full border-2 border-primary/20"
+                  />
+                )}
               </div>
               <button 
                 onClick={handleLogout}
@@ -390,6 +414,8 @@ export default function App() {
               Execute Intel
             </button>
           </div>
+
+          <SystemStatus />
         </aside>
 
         {/* Neural Workspace */}
