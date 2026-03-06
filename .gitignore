@@ -1,0 +1,51 @@
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Firebase admin
+firebase-admin.json
+service-account.json
+*.json
+!package.json
+!tsconfig.json
+!next.config.json
+!railway.json
+!companies.json
+
+# Python
+__pycache__/
+*.pyc
+venv/
+.venv/
+.venv_312/
+.venv_new/
+.env.*
+*.db
+*.sqlite3
+
+# Node
+node_modules/
+.next/
+dist/
+build/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Storage / Temp artifacts
+storage/
+temp/
+/tmp/
+*.pdf
+*.csv
+!sample_data/
